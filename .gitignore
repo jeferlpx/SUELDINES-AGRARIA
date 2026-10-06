@@ -1,0 +1,20 @@
+# OS generated files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Logs and databases
+*.log
+*.sqlite
+
+# IDE and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Node / temporary files
+node_modules/
+.npm
+dist/
+build/

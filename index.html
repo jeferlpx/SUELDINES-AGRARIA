@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal de Transparencia y Planillas - UNALM | Consulta de Sueldos</title>
+  <meta name="description" content="Sistema de Consulta y Transparencia de Planillas de Personal: Docentes, CAS, Nombrados 276 y Procedencia La Molina. Búsqueda en tiempo real, filtros y reportes ejecutivos.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- ==========================================================================
+       HEADER & NAVIGATION
+       ========================================================================== -->
+  <header class="header-nav">
+    <div class="nav-inner">
+      <div class="brand-section">
+        <div class="brand-logo-badge">🏛️</div>
+        <div class="brand-titles">
+          <h1>Planillas y Remuneraciones</h1>
+          <div class="brand-subtitle">
+            <span>Universidad Nacional Agraria La Molina</span>
+            <span>•</span>
+            <span class="status-pill">
+              <span class="pulse-dot"></span> 2,113 Registros Activos
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <!-- Theme Toggle -->
+        <button id="themeToggleBtn" class="btn-icon-circle" title="Cambiar Tema">☀️</button>
+        
+        <!-- Quick CSV Download from Navbar -->
+        <button class="btn-secondary" onclick="document.getElementById('btnExportCsvFull').click()" title="Descargar CSV">
+          📥 CSV
+        </button>
+
+        <!-- Admin Access Button -->
+        <button id="adminAccessBtn" class="btn-admin">
+          🔒 Acceso Administrador
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==========================================================================
+       MAIN CONTENT CONTAINER
+       ========================================================================== -->
+  <main class="app-container">
+
+    <!-- Print Only Header -->
+    <div class="print-only-header">
+      <h2 style="font-size: 18pt; margin-bottom: 4px;">UNIVERSIDAD NACIONAL AGRARIA LA MOLINA</h2>
+      <h3 style="font-size: 14pt; margin-bottom: 6px; color: #333;">REPORTE GENERAL DE REMUNERACIONES Y PLANILLAS DE PERSONAL</h3>
+      <p style="font-size: 10pt; color: #666;">Generado automáticamente desde el Portal de Transparencia Universitaria</p>
+    </div>
+
+    <!-- ==========================================================================
+         HERO / KPI OVERVIEW CARDS
+         ========================================================================== -->
+    <section class="hero-overview">
+      <div class="kpi-grid">
+        <!-- Card 1: Total Personal -->
+        <div class="kpi-card" style="--kpi-accent: linear-gradient(135deg, #06b6d4, #3b82f6); --kpi-icon-color: #38bdf8;">
+          <div class="kpi-header">
+            <span class="kpi-label">Total Personal</span>
+            <div class="kpi-icon-wrapper">👥</div>
+          </div>
+          <div class="kpi-value" id="kpiTotalPersonal">2,113</div>
+          <div class="kpi-subtext">Colaboradores registrados</div>
+        </div>
+
+        <!-- Card 2: Planilla Total -->
+        <div class="kpi-card" style="--kpi-accent: linear-gradient(135deg, #10b981, #06b6d4); --kpi-icon-color: #34d399;">
+          <div class="kpi-header">
+            <span class="kpi-label">Masa Salarial Mensual</span>
+            <div class="kpi-icon-wrapper">💰</div>
+          </div>
+          <div class="kpi-value" id="kpiTotalPlanilla">S/. 6,876,133.62</div>
+          <div class="kpi-subtext">Total remuneraciones + beneficios</div>
+        </div>
+
+        <!-- Card 3: Promedio Salarial -->
+        <div class="kpi-card" style="--kpi-accent: linear-gradient(135deg, #6366f1, #8b5cf6); --kpi-icon-color: #818cf8;">
+          <div class="kpi-header">
+            <span class="kpi-label">Promedio Mensual</span>
+            <div class="kpi-icon-wrapper">📊</div>
+          </div>
+          <div class="kpi-value" id="kpiPromedioSalarial">S/. 3,254.20</div>
+          <div class="kpi-subtext">Promedio general ponderado</div>
+        </div>
+
+        <!-- Card 4: Otros Beneficios -->
+        <div class="kpi-card" style="--kpi-accent: linear-gradient(135deg, #f59e0b, #ef4444); --kpi-icon-color: #fbbf24;">
+          <div class="kpi-header">
+            <span class="kpi-label">Otros Beneficios</span>
+            <div class="kpi-icon-wrapper">✨</div>
+          </div>
+          <div class="kpi-value" id="kpiOtrosBeneficios">S/. 623,504.00</div>
+          <div class="kpi-subtext">Bonificaciones y asignaciones</div>
+        </div>
+      </div>
+
+      <!-- Regime Quick Filter Buttons (Pills) -->
+      <div class="regimes-quick-bar">
+        <!-- Régimen 8 -->
+        <button class="regime-filter-btn" data-regime="8" 
+          style="--regime-accent-color: #8b5cf6; --regime-accent-bg: rgba(139, 92, 246, 0.12);"
+          title="Filtrar por Régimen 8">
+          <div class="rf-info">
+            <span class="rf-title" style="color: #c4b5fd;">
+              <span class="rf-code">8</span> Procedencia La Molina
+            </span>
+            <span class="rf-desc">Docente y Administrativo</span>
+          </div>
+          <span class="rf-badge" id="rfCount8">752</span>
+        </button>
+
+        <!-- Régimen 2 -->
+        <button class="regime-filter-btn" data-regime="2" 
+          style="--regime-accent-color: #3b82f6; --regime-accent-bg: rgba(59, 130, 246, 0.12);"
+          title="Filtrar por Régimen 2">
+          <div class="rf-info">
+            <span class="rf-title" style="color: #93c5fd;">
+              <span class="rf-code">2</span> D.L. 276 o Nombrado
+            </span>
+            <span class="rf-desc">Carrera Administrativa</span>
+          </div>
+          <span class="rf-badge" id="rfCount2">441</span>
+        </button>
+
+        <!-- Régimen 1 -->
+        <button class="regime-filter-btn" data-regime="1" 
+          style="--regime-accent-color: #10b981; --regime-accent-bg: rgba(16, 185, 129, 0.12);"
+          title="Filtrar por Régimen 1">
+          <div class="rf-info">
+            <span class="rf-title" style="color: #6ee7b7;">
+              <span class="rf-code">1</span> Contrato CAS
+            </span>
+            <span class="rf-desc">Contratación Administrativa</span>
+          </div>
+          <span class="rf-badge" id="rfCount1">380</span>
+        </button>
+
+        <!-- Régimen 3 -->
+        <button class="regime-filter-btn" data-regime="3" 
+          style="--regime-accent-color: #f59e0b; --regime-accent-bg: rgba(245, 158, 11, 0.12);"
+          title="Filtrar por Régimen 3">
+          <div class="rf-info">
+            <span class="rf-title" style="color: #fcd34d;">
+              <span class="rf-code">3</span> Docente Universitario
+            </span>
+            <span class="rf-desc">Ley Universitaria</span>
+          </div>
+          <span class="rf-badge" id="rfCount3">540</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         FILTER & REAL-TIME SEARCH CONTROLS
+         ========================================================================== -->
+    <section class="controls-card">
+      <div class="controls-grid">
+        <!-- Live Search Input -->
+        <div class="form-group">
+          <label class="form-label" for="searchInput">
+            <span>🔍 Búsqueda en Tiempo Real</span>
+          </label>
+          <div class="search-box">
+            <span class="search-icon">🔎</span>
+            <input type="text" id="searchInput" class="search-input" 
+              placeholder="Buscar por apellidos, nombres, cargo, facultad..." autocomplete="off">
+            <button id="btnClearSearch" class="btn-clear-search" title="Limpiar búsqueda">✕</button>
+          </div>
+        </div>
+
+        <!-- Filter Régimen -->
+        <div class="form-group">
+          <label class="form-label" for="regimenFilter">
+            <span>🏷️ Régimen Laboral</span>
+          </label>
+          <select id="regimenFilter" class="select-control">
+            <option value="">Todos los Regímenes</option>
+            <option value="8">8 - Procedente La Molina</option>
+            <option value="2">2 - D.L. 276 o Nombrado</option>
+            <option value="1">1 - CAS</option>
+            <option value="3">3 - Docente Universitario</option>
+          </select>
+        </div>
+
+        <!-- Filter Dependencia -->
+        <div class="form-group">
+          <label class="form-label" for="dependenciaFilter">
+            <span>🏢 Dependencia / Unidad</span>
+          </label>
+          <select id="dependenciaFilter" class="select-control">
+            <option value="">Todas las Dependencias</option>
+          </select>
+        </div>
+
+        <!-- Filter Rango Salarial -->
+        <div class="form-group">
+          <label class="form-label" for="rangoFilter">
+            <span>💵 Rango Salarial</span>
+          </label>
+          <select id="rangoFilter" class="select-control">
+            <option value="">Cualquier Monto</option>
+            <option value="0-2000">Hasta S/. 2,000</option>
+            <option value="2000-5000">S/. 2,000 a S/. 5,000</option>
+            <option value="5000-8000">S/. 5,000 a S/. 8,000</option>
+            <option value="8000+">Más de S/. 8,000</option>
+          </select>
+        </div>
+
+        <!-- Reset Button -->
+        <div class="form-group">
+          <label class="form-label">&nbsp;</label>
+          <button id="btnResetFilters" class="btn-reset-filters" title="Restablecer todos los filtros">
+            🔄 Limpiar Filtros
+          </button>
+        </div>
+      </div>
+
+      <!-- Active Filters Tag Bar -->
+      <div id="activeFiltersBar" class="active-filters-bar" style="display: none;">
+        <span class="active-filters-label">Filtros Activos:</span>
+        <div id="activeFilterTags" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+      </div>
+    </section>
+
+    <!-- ==========================================================================
+         DATA TABLE WITH 50-ROW PAGINATION
+         ========================================================================== -->
+    <section class="table-card">
+      <div class="table-header-toolbar">
+        <div class="table-stats-count" id="tableCountInfo">
+          Cargando información...
+        </div>
+
+        <div class="table-quick-actions">
+          <button class="btn-outline" onclick="window.print()" title="Imprimir listado">
+            🖨️ Imprimir
+          </button>
+          <button class="btn-secondary" id="btnExportCsvFiltered" title="Descargar registros que coinciden con los filtros">
+            📊 Exportar Filtrados (CSV)
+          </button>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th data-sort="id" style="width: 55px;"># <span class="sort-icon">⇅</span></th>
+              <th data-sort="nombreCompleto">Apellidos y Nombres <span class="sort-icon">▲</span></th>
+              <th data-sort="regimenCodigo" style="width: 140px;">Régimen <span class="sort-icon">⇅</span></th>
+              <th data-sort="cargo">Cargo / Función <span class="sort-icon">⇅</span></th>
+              <th data-sort="dependencia">Dependencia <span class="sort-icon">⇅</span></th>
+              <th data-sort="remuneraciones" style="text-align: right; width: 130px;">Remuneración <span class="sort-icon">⇅</span></th>
+              <th data-sort="otrosBeneficios" style="text-align: right; width: 120px;">Otros <span class="sort-icon">⇅</span></th>
+              <th data-sort="total" style="text-align: right; width: 130px;">Total <span class="sort-icon">⇅</span></th>
+              <th style="text-align: center; width: 90px; cursor: default;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- Filas inyectadas dinámicamente por app.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination Toolbar (50 por página por requerimiento) -->
+      <div class="pagination-container">
+        <div class="page-size-selector">
+          <span>Mostrar:</span>
+          <select id="pageSizeSelect">
+            <option value="25">25 filas</option>
+            <option value="50" selected>50 filas (Recomendado)</option>
+            <option value="100">100 filas</option>
+            <option value="all">Ver Todos</option>
+          </select>
+        </div>
+
+        <div class="pagination-info" id="paginationInfo">
+          Cargando páginas...
+        </div>
+
+        <div class="pagination-buttons" id="paginationButtons">
+          <!-- Botones de página generados dinámicamente -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==========================================================================
+       MODAL 1: LOGIN ADMINISTRADOR (usuario: admin / contraseña: 123)
+       ========================================================================== -->
+  <div id="loginModal" class="modal-overlay">
+    <div class="modal-box login-box">
+      <div class="modal-header">
+        <h3 class="modal-title">🔐 Acceso de Administrador</h3>
+        <button id="btnCloseLoginModal" class="btn-close-modal" title="Cerrar">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="login-icon-badge">👑</div>
+
+        <!-- Hint de Credenciales para facilitar la evaluación -->
+        <div class="login-credentials-hint">
+          <div class="hint-text">
+            <span>Usuario: <strong>admin</strong></span> • 
+            <span>Contraseña: <strong>123</strong></span>
+          </div>
+          <button type="button" id="btnQuickFill" class="btn-quick-fill">
+            ⚡ Autocompletar
+          </button>
+        </div>
+
+        <!-- Error Msg -->
+        <div id="loginErrorMsg" class="login-error-msg">
+          <span>⚠️</span>
+          <span>Usuario o contraseña incorrectos. Verifica las credenciales.</span>
+        </div>
+
+        <form id="loginForm">
+          <div class="form-group" style="margin-bottom: 16px;">
+            <label class="form-label" for="loginUsername">Usuario:</label>
+            <input type="text" id="loginUsername" class="search-input" placeholder="Ingresa usuario" required>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 22px;">
+            <label class="form-label" for="loginPassword">Contraseña:</label>
+            <input type="password" id="loginPassword" class="search-input" placeholder="Ingresa contraseña" required>
+          </div>
+
+          <button type="submit" class="btn-admin" style="width: 100%; padding: 12px;">
+            Ingresar al Panel de Control
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 2: PANEL DE ADMINISTRADOR Y REPORTES
+       ========================================================================== -->
+  <div id="adminModal" class="modal-overlay">
+    <div class="modal-box admin-modal-box">
+      <div class="modal-header">
+        <div style="display: flex; align-items: center; gap: 12px;">
+          <span style="font-size: 1.5rem;">👑</span>
+          <div>
+            <h3 class="modal-title">Panel de Administración y Reportes</h3>
+            <span style="font-size: 0.8rem; color: #34d399;">● Sesión activa: Administrador Principal</span>
+          </div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <button id="btnAdminLogout" class="btn-outline" style="color: #fb7185; border-color: rgba(244,63,94,0.3);">
+            Cerrar Sesión
+          </button>
+          <button id="btnCloseAdminModal" class="btn-close-modal" title="Cerrar">✕</button>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="admin-tabs-nav" id="adminTabsNav">
+        <button class="tab-btn active" data-tab="reporte">📊 Reporte Ejecutivo</button>
+        <button class="tab-btn" data-tab="exportar">📥 Descarga y Exportación</button>
+        <button class="tab-btn" data-tab="gestion">➕ Registrar Personal</button>
+      </div>
+
+      <!-- Modal Body Tab Content -->
+      <div class="modal-body">
+        
+        <!-- ================= TAB 1: REPORTE EJECUTIVO ================= -->
+        <div id="tabContent-reporte" class="tab-content active">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; flex-wrap: wrap; gap: 10px;">
+            <div>
+              <h4 style="font-family: var(--font-main); font-size: 1.2rem; color: var(--text-primary);">
+                Resumen Ejecutivo Consolidado de Planillas
+              </h4>
+              <p style="font-size: 0.82rem; color: var(--text-secondary);">
+                Emitido al: <span id="reportTimestamp" style="color: var(--accent-cyan); font-weight: 600;"></span>
+              </p>
+            </div>
+
+            <button id="btnPrintReport" class="btn-admin" style="font-size: 0.85rem; padding: 8px 16px;">
+              🖨️ Imprimir / Guardar en PDF
+            </button>
+          </div>
+
+          <!-- Tabla Resumen por Régimen Laboral -->
+          <div class="report-section">
+            <div class="report-section-title">
+              <span>Distribución y Gasto por Régimen Laboral</span>
+            </div>
+            <div class="table-wrapper">
+              <table class="report-summary-table">
+                <thead>
+                  <tr>
+                    <th>Cód.</th>
+                    <th>Régimen Laboral</th>
+                    <th style="text-align: right;">N° Colaboradores</th>
+                    <th style="text-align: right;">Remuneración Base</th>
+                    <th style="text-align: right;">Otros Beneficios</th>
+                    <th style="text-align: right;">Planilla Total</th>
+                    <th style="text-align: right;">Promedio</th>
+                    <th style="text-align: right;">% Gasto</th>
+                  </tr>
+                </thead>
+                <tbody id="reportRegimeTableBody">
+                  <!-- Llenado dinámicamente -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Charts Grid: Top Dependencias y Top Cargos -->
+          <div class="charts-grid">
+            <div class="chart-card">
+              <h4>🏛️ Top 8 Dependencias con Mayor Gasto en Planilla</h4>
+              <div id="reportTopDepsList">
+                <!-- Llenado dinámico -->
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <h4>🎓 Top 8 Cargos con Mayor Remuneración Promedio</h4>
+              <div id="reportTopCargosList">
+                <!-- Llenado dinámico -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 2: DESCARGAS Y EXPORTACIONES ================= -->
+        <div id="tabContent-exportar" class="tab-content">
+          <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
+            Selecciona el formato deseado para descargar la base de datos completa o la selección actualmente filtrada.
+          </p>
+
+          <div class="export-cards-grid">
+            <!-- Tarjeta 1: CSV Completo -->
+            <div class="export-card">
+              <div class="export-card-header">
+                <div class="export-icon-box">📄</div>
+                <div class="export-card-info">
+                  <h4>CSV Completo</h4>
+                  <p>Todos los 2,113 registros de la institución con cabeceras completas y UTF-8.</p>
+                </div>
+              </div>
+              <button id="btnExportCsvFull" class="btn-secondary" style="width: 100%;">
+                📥 Descargar Base Completa
+              </button>
+            </div>
+
+            <!-- Tarjeta 2: Formato Excel -->
+            <div class="export-card">
+              <div class="export-card-header">
+                <div class="export-icon-box excel">📗</div>
+                <div class="export-card-info">
+                  <h4>Excel Compatible</h4>
+                  <p>Archivo CSV con BOM UTF-8 y separador de lista listo para doble clic en Excel.</p>
+                </div>
+              </div>
+              <button id="btnExportExcel" class="btn-secondary" style="width: 100%;">
+                📗 Exportar para Excel
+              </button>
+            </div>
+
+            <!-- Tarjeta 3: Copiar al Portapapeles -->
+            <div class="export-card">
+              <div class="export-card-header">
+                <div class="export-icon-box">📋</div>
+                <div class="export-card-info">
+                  <h4>Copiar Portapapeles</h4>
+                  <p>Copia los datos tabulares para pegarlos directamente en Google Sheets o Excel.</p>
+                </div>
+              </div>
+              <button id="btnCopyClipboard" class="btn-secondary" style="width: 100%;">
+                📋 Copiar Selección
+              </button>
+            </div>
+
+            <!-- Tarjeta 4: JSON Data -->
+            <div class="export-card">
+              <div class="export-card-header">
+                <div class="export-icon-box" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">📦</div>
+                <div class="export-card-info">
+                  <h4>JSON API Data</h4>
+                  <p>Estructura en objetos JSON ideal para consumo en sistemas externos o APIs.</p>
+                </div>
+              </div>
+              <button id="btnExportJson" class="btn-secondary" style="width: 100%;">
+                📦 Exportar Formato JSON
+              </button>
+            </div>
+
+            <!-- Tarjeta 5: Reporte Imprimible -->
+            <div class="export-card">
+              <div class="export-card-header">
+                <div class="export-icon-box pdf">🖨️</div>
+                <div class="export-card-info">
+                  <h4>Reporte Oficial PDF</h4>
+                  <p>Genera la versión con membrete para imprimir o guardar como archivo PDF.</p>
+                </div>
+              </div>
+              <button class="btn-admin" style="width: 100%;" onclick="window.print()">
+                🖨️ Generar PDF / Imprimir
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ================= TAB 3: REGISTRO DE PERSONAL (CRUD) ================= -->
+        <div id="tabContent-gestion" class="tab-content">
+          <div class="report-section" style="max-width: 750px; margin: 0 auto;">
+            <div class="report-section-title">
+              <span>Registrar Nuevo Colaborador</span>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 18px;">
+              Los datos registrados se añadirán a la base de datos en tiempo real, actualizando los contadores, gráficos, reportes y descargas.
+            </p>
+
+            <form id="newRecordForm">
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                <div class="form-group">
+                  <label class="form-label" for="newRegimen">Régimen Laboral *</label>
+                  <select id="newRegimen" class="select-control" required>
+                    <option value="8">8 - Procedente La Molina</option>
+                    <option value="2">2 - D.L. 276 o Nombrado</option>
+                    <option value="1">1 - CAS</option>
+                    <option value="3">3 - Docente Universitario</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="newPaterno">Apellido Paterno *</label>
+                  <input type="text" id="newPaterno" class="search-input" placeholder="Ej. GARCIA" required>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                <div class="form-group">
+                  <label class="form-label" for="newMaterno">Apellido Materno *</label>
+                  <input type="text" id="newMaterno" class="search-input" placeholder="Ej. PEREZ" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="newNombres">Nombres *</label>
+                  <input type="text" id="newNombres" class="search-input" placeholder="Ej. JUAN CARLOS" required>
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px;">
+                <div class="form-group">
+                  <label class="form-label" for="newCargo">Cargo / Función</label>
+                  <input type="text" id="newCargo" class="search-input" placeholder="Ej. ESPECIALISTA EN SISTEMAS">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="newDependencia">Dependencia</label>
+                  <input type="text" id="newDependencia" class="search-input" placeholder="Ej. OFICINA DE SISTEMAS">
+                </div>
+              </div>
+
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 22px;">
+                <div class="form-group">
+                  <label class="form-label" for="newRemun">Remuneración Básica (S/.) *</label>
+                  <input type="number" step="0.01" min="0" id="newRemun" class="search-input" placeholder="0.00" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="newOtros">Otros Beneficios (S/.)</label>
+                  <input type="number" step="0.01" min="0" id="newOtros" class="search-input" placeholder="0.00" value="0">
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: flex-end; gap: 12px;">
+                <button type="reset" class="btn-outline">Limpiar</button>
+                <button type="submit" class="btn-admin">💾 Guardar Registro</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       MODAL 3: FICHA INDIVIDUAL DE COLABORADOR
+       ========================================================================== -->
+  <div id="detailModal" class="modal-overlay">
+    <div class="modal-box detail-modal-box">
+      <div class="modal-header">
+        <h3 class="modal-title">📋 Ficha de Personal</h3>
+        <button id="btnCloseDetailModal" class="btn-close-modal" title="Cerrar">✕</button>
+      </div>
+      <div class="modal-body" id="detailContent">
+        <!-- Rellenado dinámicamente -->
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="window.closeDetailModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
